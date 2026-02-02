@@ -11,7 +11,11 @@
       --ink2:#1f4c38;
       --paper:#f7fff1;
       --shadow: rgba(0,0,0,.16);
+
+      /* Instagram-Icon-Größe */
+      --igSize: 84px; /* 64/72/84/96 -> nimm was dir passt */
     }
+
     *{box-sizing:border-box}
     body{
       margin:0;
@@ -40,8 +44,8 @@
       gap:10px;
     }
     .brandLogo{
-      width:64px;
-      height:64px;
+      width: 140px;
+      height: 140px;
       border-radius:16px;
       border:2px solid var(--ink);
       background: rgba(255,255,255,.85);
@@ -86,12 +90,14 @@
       gap:10px;
       flex-wrap:wrap;
     }
+
+    /* ===== Instagram Button + Logo: FIX ===== */
     .igLink{
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      gap:10px;
-      padding:12px 16px;
+      gap:16px;
+      padding:16px 26px;
       border:2px solid var(--ink);
       border-radius:999px;
       background: rgba(247,255,241,.92);
@@ -100,31 +106,31 @@
       text-decoration:none;
       font-weight:1000;
       letter-spacing:.6px;
-      font-size:12px;
+      font-size:14px;
       text-transform:uppercase;
+      line-height:1;
+      white-space:nowrap;
+      min-height: calc(var(--igSize) + 14px);
     }
     .igLink:active{
       transform: translateY(2px);
       box-shadow: 0 4px 0 var(--ink2);
     }
-    .igIconBox{
-      width:44px;
-      height:44px;
-    }
 
-    .igIcon{
-      width:44px;
-      height:44px;
-      object-fit:contain;
-      display:block;
+    .igIconBox{
+      width: var(--igSize);
+      height: var(--igSize);
+      flex: 0 0 var(--igSize);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
     }
     .igLogo{
-      width:44px;
-      height:44px;
-      object-fit:contain;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
       display:block;
     }
-
 
     /* CARDS */
     .card{
@@ -317,47 +323,6 @@
     @media (min-width:560px){
       .bigTime .t2{font-size:26px;}
     }
-    /* ===== FIX: PumpingDad-Logo + Instagram-Logo skalieren (nur Optik) ===== */
-
-/* PumpingDad Logo oben größer */
-.brandLogo{
-  width: 140px !important;
-  height: 140px !important;
-}
-
-/* Instagram Button: Höhe fix, nicht endlos aufblasen */
-.igLink{
-  padding: 14px 22px !important;
-  line-height: 1 !important;
-}
-
-/* Instagram Icon: groß wie die Button-Höhe, sauber zentriert */
-.igLogo, .igIcon, .igImg{
-  width: 48px !important;
-  height: 48px !important;
-  display: block !important;
-  object-fit: contain !important;
-  flex: 0 0 44px !important;
-}
-    /* FIX: Icon-Box bestimmt die echte Größe */
-.igIconBox{
-  width: 48px !important;
-  height: 488px !important;
-  flex: 0 0 48px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-/* Bild soll die Box wirklich ausfüllen */
-.igIconBox .igLogo{
-  width: 48px !important;
-  height: 48px !important;
-  display: block !important;
-  object-fit: contain !important;
-}
-
-
   </style>
 </head>
 
@@ -365,8 +330,6 @@
   <div class="wrap">
     <div class="banner">
       <div class="brandTop">
-        <!-- Optional: PumpingDad Logo (wenn vorhanden) -->
-        <!-- Lege pumpingdad-logo.png neben die index.html, dann wird es angezeigt -->
         <div class="brandLogo" title="ThePumpingDad">
           <img src="pumpingdad-logo.png" alt="ThePumpingDad Logo" onerror="this.parentElement.style.display='none';">
         </div>
@@ -583,27 +546,21 @@
   let sex = "m";
   let mode = "def"; // "def" | "time"
 
-  // Fix: TEF = 10%
   const TEF_RATE = 0.10;
 
-  // MET Werte
   const MET_STRENGTH = 6;
   const MET_CARDIO_MOD = 7;
   const MET_CARDIO_HARD = 10;
 
-  // Mifflin-St Jeor
   function mifflinBMR(sex, wKg, hCm, age){
     const s = (sex === "m") ? 5 : -161;
     return (10 * wKg) + (6.25 * hCm) - (5 * age) + s;
   }
 
-  // NEAT aus Schritten (Heuristik)
-  // kcal ≈ steps * weight * 0.0005
   function neatFromSteps(steps, weightKg){
     return steps * weightKg * 0.0005;
   }
 
-  // EAT aus Trainingsminuten/Woche (MET-Ansatz), umgerechnet auf pro Tag
   function eatFromTraining(weightKg, strengthMin, cardioModMin, cardioHardMin){
     const hoursStrength = strengthMin / 60;
     const hoursMod = cardioModMin / 60;
@@ -640,7 +597,6 @@
     return { hrMax, modLo, modHi, hardLo, hardHi };
   }
 
-  // UI: Sex
   $("sexM").addEventListener("click", () => {
     sex = "m";
     $("sexM").classList.add("active");
@@ -654,7 +610,6 @@
     recalc();
   });
 
-  // UI: Mode
   $("modeDef").addEventListener("click", () => {
     mode = "def";
     $("modeDef").classList.add("active");
@@ -672,19 +627,16 @@
     recalc();
   });
 
-  // Inputs recalc
   ["age","height","weight","goal","steps","strengthMin","cardioModMin","cardioHardMin"].forEach(id => {
     $(id).addEventListener("input", recalc);
     $(id).addEventListener("change", recalc);
   });
 
-  // Sync sliders
   syncRangeAndNumber($("defSlider"), $("defInput"));
   syncRangeAndNumber($("fatSlider"), $("fatInput"));
   syncRangeAndNumber($("weeksSlider"), $("weeksInput"));
 
   function recalc(){
-    // Inputs
     const age = clamp(Number($("age").value || 0), 10, 99);
     const h = clamp(Number($("height").value || 0), 120, 230);
     const w = clamp(Number($("weight").value || 0), 35, 250);
@@ -695,25 +647,21 @@
     const cardioModMin = clamp(Number($("cardioModMin").value || 0), 0, 2000);
     const cardioHardMin = clamp(Number($("cardioHardMin").value || 0), 0, 2000);
 
-    // Fett-Faktor: 0.0 bis 3.0 g/kg
     const fatFactor = clamp(Number($("fatInput").value || 0.9), 0, 3);
 
-    // Pulsbereiche anzeigen
     const hr = hrRanges(age);
     $("hrMod").textContent  = `(${hr.modLo}–${hr.modHi} bpm)`;
     $("hrHard").textContent = `(${hr.hardLo}–${hr.hardHi} bpm)`;
 
-    // Core components
     const bmr = mifflinBMR(sex, w, h, age);
     const neat = neatFromSteps(steps, w);
     const eat = eatFromTraining(w, strengthMin, cardioModMin, cardioHardMin);
 
-    const tdee = bmr + neat + eat;        // ohne TEF
-    const tef = TEF_RATE * tdee;          // fix 10%
-    const tee = tdee + tef;               // mit TEF
+    const tdee = bmr + neat + eat;
+    const tef = TEF_RATE * tdee;
+    const tee = tdee + tef;
 
-    // Goal calculation
-    const diffKg = w - goal; // >0: abnehmen
+    const diffKg = w - goal;
     const warn = [];
 
     let deficit = 0;
@@ -748,7 +696,6 @@
 
     const target = tee - deficit;
 
-    // Warnings
     if (goal > w) warn.push("Wunschgewicht liegt über aktuellem Gewicht.");
     if (target < 1200) warn.push("Kalorienziel < 1200 kcal/Tag.");
     if (deficit > 900) warn.push("Defizit > 900 kcal/Tag.");
@@ -762,7 +709,6 @@
       warnBox.textContent = "";
     }
 
-    // Macros
     const proteinG = 2.0 * w;
     const fatG = fatFactor * w;
 
@@ -772,7 +718,6 @@
     const carbCals = Math.max(0, target - proteinCals - fatCals);
     const carbsG = carbCals / 4;
 
-    // Render KPIs
     $("bmrKpi").textContent  = `${fmt(round(bmr))} kcal`;
     $("neatKpi").textContent = `${fmt(round(neat))} kcal`;
     $("eatKpi").textContent  = `${fmt(round(eat))} kcal`;
@@ -804,7 +749,6 @@
     $("fFill").style.width = `${fPct}%`;
     $("cFill").style.width = `${cPct}%`;
 
-    // Big time
     if (diffKg > 0 && deficit > 0){
       const days = (diffKg * 7700) / deficit;
       const wks = days / 7;
@@ -832,7 +776,3 @@
 </script>
 </body>
 </html>
-
-
-
-
