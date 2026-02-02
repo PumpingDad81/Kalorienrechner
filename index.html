@@ -24,46 +24,77 @@
     .grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px;}
     @media (min-width: 980px){ .grid{grid-template-columns:1.05fr .95fr;gap:14px;} }
 
-    /* HEADER */
-    .banner{
-      border:3px solid var(--ink);
-      background: rgba(247,255,241,.75);
-      border-radius:18px;
-      box-shadow: 0 10px 0 var(--ink2), 0 18px 26px var(--shadow);
-      padding:14px 16px;
-      text-align:center;
-    }
-    .brandTop{
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:10px;
-    }
-    .brandLogo{
-      width:64px;
-      height:64px;
-      border-radius:16px;
-      border:2px solid var(--ink);
-      background: rgba(255,255,255,.85);
-      box-shadow: 0 6px 0 var(--ink2);
-      display:grid;
-      place-items:center;
-      overflow:hidden;
-    }
-    .brandLogo img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-    }
-    h1{
-      margin:0;
-      font-size:26px;
-      line-height:1.05;
-      letter-spacing:.4px;
-      text-transform:uppercase;
-      font-weight:1000;
-    }
+    /* ================= HEADER ================= */
+.banner{
+  border:3px solid var(--ink);
+  background: rgba(247,255,241,.85);
+  border-radius:20px;
+  box-shadow: 0 10px 0 var(--ink2), 0 18px 26px var(--shadow);
+  padding:20px 16px;
+}
+
+.brandRow{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:14px;
+  text-align:center;
+}
+
+.brandLogo{
+  width:110px;
+  height:110px;
+  border-radius:22px;
+  border:3px solid var(--ink);
+  background:#fff;
+  box-shadow:0 8px 0 var(--ink2);
+  overflow:hidden;
+}
+
+.brandLogo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+h1{
+  margin:0;
+  font-size:28px;
+  font-weight:1000;
+  letter-spacing:.8px;
+  text-transform:uppercase;
+}
+
+/* Instagram Button – LOGO = BUTTON */
+.igLink{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:14px 20px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background: rgba(247,255,241,.95);
+  box-shadow:0 8px 0 var(--ink2);
+  color:var(--ink);
+  text-decoration:none;
+  font-weight:1000;
+  letter-spacing:.8px;
+  font-size:14px;
+  text-transform:uppercase;
+}
+
+.igLink:active{
+  transform:translateY(2px);
+  box-shadow:0 6px 0 var(--ink2);
+}
+
+.igLogo{
+  width:36px;
+  height:36px;
+  display:block;
+}
+
     .badge{
       display:inline-flex;
       align-items:center;
@@ -320,25 +351,28 @@
 <body>
   <div class="wrap">
     <div class="banner">
-      <div class="brandTop">
-        <!-- Optional: PumpingDad Logo (wenn vorhanden) -->
-        <!-- Lege pumpingdad-logo.png neben die index.html, dann wird es angezeigt -->
-        <div class="brandLogo" title="ThePumpingDad">
-          <img src="pumpingdad-logo.png" alt="ThePumpingDad Logo" onerror="this.parentElement.style.display='none';">
-        </div>
+  <div class="brandRow">
 
-        <div class="badge">🏋️ THE PUMPINGDAD</div>
-        <h1>Kalorienrechner</h1>
+    <!-- PUMPINGDAD LOGO -->
+    <div class="brandLogo">
+      <img src="pumpingdad-logo.png" alt="ThePumpingDad Logo">
+    </div>
 
-        <div class="socialRow">
-          <a class="igLink" href="https://www.instagram.com/thepumpingdad/" target="_blank" rel="noopener noreferrer">
-            <span class="igIconBox">
-              <img class="igIcon" src="instagram-logo.png" alt="Instagram">
-            </span>
-            Instagram
-          </a>
-        </div>
-      </div>
+    <!-- TITEL -->
+    <h1>Kalorienrechner</h1>
+
+    <!-- INSTAGRAM -->
+    <a class="igLink"
+       href="https://www.instagram.com/thepumpingdad/"
+       target="_blank"
+       rel="noopener noreferrer">
+      <img src="instagram-logo.png" class="igLogo" alt="Instagram">
+      Instagram
+    </a>
+
+  </div>
+</div>
+
     </div>
 
     <div class="grid">
@@ -788,3 +822,4 @@
 </script>
 </body>
 </html>
+
