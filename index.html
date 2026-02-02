@@ -317,6 +317,29 @@
     @media (min-width:560px){
       .bigTime .t2{font-size:26px;}
     }
+    /* ===== FIX: PumpingDad-Logo + Instagram-Logo skalieren (nur Optik) ===== */
+
+/* PumpingDad Logo oben größer */
+.brandLogo{
+  width: 140px !important;
+  height: 140px !important;
+}
+
+/* Instagram Button: Höhe fix, nicht endlos aufblasen */
+.igLink{
+  padding: 14px 22px !important;
+  line-height: 1 !important;
+}
+
+/* Instagram Icon: groß wie die Button-Höhe, sauber zentriert */
+.igLogo, .igIcon, .igImg{
+  width: 44px !important;
+  height: 44px !important;
+  display: block !important;
+  object-fit: contain !important;
+  flex: 0 0 44px !important;
+}
+
   </style>
 </head>
 
@@ -791,3 +814,4 @@
 </script>
 </body>
 </html>
+
