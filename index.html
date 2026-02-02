@@ -339,6 +339,24 @@
   object-fit: contain !important;
   flex: 0 0 44px !important;
 }
+    /* FIX: Icon-Box bestimmt die echte Größe */
+.igIconBox{
+  width: 44px !important;
+  height: 44px !important;
+  flex: 0 0 44px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Bild soll die Box wirklich ausfüllen */
+.igIconBox .igLogo{
+  width: 44px !important;
+  height: 44px !important;
+  display: block !important;
+  object-fit: contain !important;
+}
+
 
   </style>
 </head>
@@ -814,5 +832,6 @@
 </script>
 </body>
 </html>
+
 
 
