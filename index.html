@@ -207,6 +207,13 @@
       box-shadow: 0 4px 0 var(--ink2);
     }
 
+    button:active{
+      transform: translateY(2px);
+    }
+    button:hover{
+      filter: brightness(1.02);
+    }
+
     .sliderWrap{
       display:grid;
       grid-template-columns:1fr;
@@ -228,11 +235,12 @@
     .warn{
       margin-top:10px;
       border:2px dashed var(--ink);
-      background: rgba(210,236,184,.75);
+      background: rgba(255,100,100,.85);
       padding:10px;
       border-radius:14px;
       font-size:12px;
       font-weight:1000;
+      color: white;
     }
 
     .kpiGrid{display:grid;grid-template-columns:1fr;gap:10px;}
@@ -308,6 +316,8 @@
       box-shadow: 0 6px 0 var(--ink2);
       text-align:center;
       white-space:nowrap;
+      font-size:14px;
+      font-weight:bold;
     }
 
     .bigTime{
@@ -334,6 +344,19 @@
     @media (min-width:560px){
       .bigTime .t2{font-size:26px;}
     }
+
+    /* Feinschliff Instagram Button */
+.igLink{
+  min-height: calc(var(--igSize) + 8px);
+  box-shadow: 0 5px 0 var(--ink2);
+}
+.igLink:active{
+  box-shadow: 0 3px 0 var(--ink2);
+}
+.igLink:hover{
+  filter: brightness(1.02);
+}
+
   </style>
 </head>
 
@@ -345,7 +368,7 @@
           <img src="pumpingdad-logo.png" alt="ThePumpingDad Logo" onerror="this.parentElement.style.display='none';">
         </div>
 
-        <div class="badge">THE PUMPINGDAD</div>
+        <div class="badge">🏋️ THE PUMPINGDAD</div>
         <h1>Kalorienrechner</h1>
 
         <div class="socialRow">
@@ -369,6 +392,22 @@
           <div class="seg">
             <button id="sexM" class="active" type="button">Männlich</button>
             <button id="sexF" type="button">Weiblich</button>
+          </div>
+        </div>
+
+        <div style="margin-bottom:10px;">
+          <label>Berechnungsmodus</label>
+          <div class="seg">
+            <button id="modeSimple" class="active" type="button">Normal (Wochendurchschnitt)</button>
+            <button id="modeComplex" type="button">Komplex (Tagesbasiert)</button>
+          </div>
+        </div>
+
+        <div id="dayTypeBlock" style="margin-bottom:10px; display:none;">
+          <label>Tag-Typ</label>
+          <div class="seg">
+            <button id="dayTrain" class="active" type="button">Trainingstag</button>
+            <button id="dayRest" type="button">Ruhetag</button>
           </div>
         </div>
 
@@ -397,7 +436,19 @@
         <div class="row" style="margin-top:10px;">
           <div>
             <label for="steps">Schritte pro Tag</label>
-            <input id="steps" type="number" min="0" max="90000" step="100" value="10000" />
+            <input id="steps" type="number" min="0" max="40000" step="100" value="8000" />
+          </div>
+          <div></div>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <div>
+            <label for="proteinInput">Eiweiß (g/kg)</label>
+            <div class="sliderWrap">
+              <input id="proteinSlider" type="range" min="0.8" max="3.5" step="0.1" value="2.0" />
+              <input id="proteinInput" type="number" min="0.8" max="3.5" step="0.1" value="2.0" />
+            </div>
+            <div class="subhint">0.8 bis 3.5 g/kg</div>
           </div>
           <div>
             <label for="fatInput">Fett (g/kg)</label>
@@ -410,7 +461,7 @@
         </div>
 
         <div style="margin-top:12px;">
-          <label>Training pro Woche (Minuten)</label>
+          <label id="trainingLabel">Training pro Woche (Minuten)</label>
           <div class="row">
             <div>
               <label for="strengthMin" style="font-size:11px;opacity:.95;">Krafttraining</label>
@@ -472,7 +523,7 @@
           </div>
 
           <div class="kpi">
-            <div class="lab">Schritte (NEAT)</div>
+            <div class="lab">NEAT (Schritte)</div>
             <div class="val" id="neatKpi">–</div>
           </div>
 
@@ -525,15 +576,15 @@
 
           <div style="margin-top:10px; display:grid; gap:8px;">
             <div>
-              <div class="barTitle"><span>Eiweiß</span><span id="pCal">–</span></div>
+              <div class="barTitle" style="font-weight:bold; font-size:14px;"><span>Eiweiß</span><span id="pCal" style="font-weight:bold;">–</span></div>
               <div class="bar"><div class="fill" id="pFill"></div></div>
             </div>
             <div>
-              <div class="barTitle"><span>Fett</span><span id="fCal">–</span></div>
+              <div class="barTitle" style="font-weight:bold; font-size:14px;"><span>Fett</span><span id="fCal" style="font-weight:bold;">–</span></div>
               <div class="bar"><div class="fill" id="fFill"></div></div>
             </div>
             <div>
-              <div class="barTitle"><span>Kohlenhydrate</span><span id="cCal">–</span></div>
+              <div class="barTitle" style="font-weight:bold; font-size:14px;"><span>Kohlenhydrate</span><span id="cCal" style="font-weight:bold;">–</span></div>
               <div class="bar"><div class="fill" id="cFill"></div></div>
             </div>
           </div>
@@ -546,6 +597,72 @@
 
       </div>
     </div>
+
+    <!-- Gespeicherte Werte -->
+    <div class="card" style="margin-top:12px;">
+      <h2>Kalorienziele speichern</h2>
+      
+      <div style="margin-bottom:12px;">
+        <button id="saveBtn" style="width:100%; padding:14px; border:2px solid var(--ink); border-radius:14px; background: rgba(210,236,184,.95); color:var(--ink); font-weight:1000; cursor:pointer; box-shadow: 0 6px 0 var(--ink2); text-transform:uppercase; letter-spacing:.6px; font-size:13px;">
+          Aktuellen Wert speichern
+        </button>
+      </div>
+
+      <div id="savedValues" style="display:none;">
+        <div style="margin-bottom:8px; font-size:12px; font-weight:1000; text-transform:uppercase; letter-spacing:.6px;">
+          Gespeicherte Werte:
+        </div>
+        
+        <div style="display:grid; grid-template-columns:1fr; gap:12px;">
+          <div id="savedTrain" style="display:none; border:2px solid var(--ink); border-radius:18px; padding:12px; background: rgba(255,255,255,.82); box-shadow: 0 6px 0 var(--ink2);">
+            <div style="font-size:13px; font-weight:1000; text-transform:uppercase; letter-spacing:.6px; margin-bottom:8px;">
+              🏋️ Trainingstag
+            </div>
+            <div style="font-size:18px; font-weight:1200; margin-bottom:8px;" id="savedTrainVal">–</div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; font-size:12px; font-weight:bold;">
+              <span id="savedTrainP">–</span>
+              <span>|</span>
+              <span id="savedTrainF">–</span>
+              <span>|</span>
+              <span id="savedTrainC">–</span>
+            </div>
+          </div>
+
+          <div id="savedRestNoCardio" style="display:none; border:2px solid var(--ink); border-radius:18px; padding:12px; background: rgba(255,255,255,.82); box-shadow: 0 6px 0 var(--ink2);">
+            <div style="font-size:13px; font-weight:1000; text-transform:uppercase; letter-spacing:.6px; margin-bottom:8px;">
+              🛋️ Ruhetag (ohne Cardio)
+            </div>
+            <div style="font-size:18px; font-weight:1200; margin-bottom:8px;" id="savedRestNoCardioVal">–</div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; font-size:12px; font-weight:bold;">
+              <span id="savedRestNoCardioP">–</span>
+              <span>|</span>
+              <span id="savedRestNoCardioF">–</span>
+              <span>|</span>
+              <span id="savedRestNoCardioC">–</span>
+            </div>
+          </div>
+
+          <div id="savedRestCardio" style="display:none; border:2px solid var(--ink); border-radius:18px; padding:12px; background: rgba(255,255,255,.82); box-shadow: 0 6px 0 var(--ink2);">
+            <div style="font-size:13px; font-weight:1000; text-transform:uppercase; letter-spacing:.6px; margin-bottom:8px;">
+              🏃 Ruhetag (mit Cardio)
+            </div>
+            <div style="font-size:18px; font-weight:1200; margin-bottom:8px;" id="savedRestCardioVal">–</div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; font-size:12px; font-weight:bold;">
+              <span id="savedRestCardioP">–</span>
+              <span>|</span>
+              <span id="savedRestCardioF">–</span>
+              <span>|</span>
+              <span id="savedRestCardioC">–</span>
+            </div>
+          </div>
+        </div>
+
+        <button id="clearBtn" style="width:100%; margin-top:12px; padding:12px; border:2px solid var(--ink); border-radius:14px; background: rgba(255,255,255,.78); color:var(--ink); font-weight:1000; cursor:pointer; box-shadow: 0 6px 0 var(--ink2); text-transform:uppercase; letter-spacing:.6px; font-size:11px;">
+          Alle Werte löschen
+        </button>
+      </div>
+
+    </div>
   </div>
 
 <script>
@@ -556,6 +673,15 @@
 
   let sex = "m";
   let mode = "def"; // "def" | "time"
+  let dayType = "train"; // "train" | "rest"
+  let calculationMode = "simple"; // "simple" | "complex"
+
+  // Objekt zum Speichern der verschiedenen Kalorienziele
+  let savedCalories = {
+    train: { kcal: null, protein: null, fat: null, carbs: null },
+    restNoCardio: { kcal: null, protein: null, fat: null, carbs: null },
+    restCardio: { kcal: null, protein: null, fat: null, carbs: null }
+  };
 
   const TEF_RATE = 0.10;
 
@@ -577,12 +703,13 @@
     const hoursMod = cardioModMin / 60;
     const hoursHard = cardioHardMin / 60;
 
-    const weekKcal =
+    // Berechnung für den aktuellen Tag (nicht pro Woche)
+    const dayKcal =
       (MET_STRENGTH * weightKg * hoursStrength) +
       (MET_CARDIO_MOD * weightKg * hoursMod) +
       (MET_CARDIO_HARD * weightKg * hoursHard);
 
-    return weekKcal / 7;
+    return dayKcal;
   }
 
   function syncRangeAndNumber(rangeEl, numberEl){
@@ -621,6 +748,50 @@
     recalc();
   });
 
+  $("modeSimple").addEventListener("click", () => {
+    calculationMode = "simple";
+    $("modeSimple").classList.add("active");
+    $("modeComplex").classList.remove("active");
+    $("dayTypeBlock").style.display = "none";
+    $("trainingLabel").textContent = "Training pro Woche (Minuten)";
+    // Standardwerte für Wochenmodus
+    $("strengthMin").value = "180";
+    $("cardioModMin").value = "60";
+    $("fatSlider").value = "0.8";
+    $("fatInput").value = "0.8";
+    recalc();
+  });
+  $("modeComplex").addEventListener("click", () => {
+    calculationMode = "complex";
+    $("modeComplex").classList.add("active");
+    $("modeSimple").classList.remove("active");
+    $("dayTypeBlock").style.display = "block";
+    $("trainingLabel").textContent = "Training heute (Minuten)";
+    // Standardwerte für Tagesmodus
+    $("strengthMin").value = "60";
+    $("cardioModMin").value = "30";
+    recalc();
+  });
+
+  $("dayTrain").addEventListener("click", () => {
+    dayType = "train";
+    $("dayTrain").classList.add("active");
+    $("dayRest").classList.remove("active");
+    // Bei Trainingstag Fett zurück auf 0.8
+    $("fatSlider").value = "0.8";
+    $("fatInput").value = "0.8";
+    recalc();
+  });
+  $("dayRest").addEventListener("click", () => {
+    dayType = "rest";
+    $("dayRest").classList.add("active");
+    $("dayTrain").classList.remove("active");
+    // Bei Ruhetag Fett auf 1.0
+    $("fatSlider").value = "1.0";
+    $("fatInput").value = "1.0";
+    recalc();
+  });
+
   $("modeDef").addEventListener("click", () => {
     mode = "def";
     $("modeDef").classList.add("active");
@@ -644,8 +815,77 @@
   });
 
   syncRangeAndNumber($("defSlider"), $("defInput"));
+  syncRangeAndNumber($("proteinSlider"), $("proteinInput"));
   syncRangeAndNumber($("fatSlider"), $("fatInput"));
   syncRangeAndNumber($("weeksSlider"), $("weeksInput"));
+
+  // Speicher-Funktion
+  $("saveBtn").addEventListener("click", () => {
+    const cardioModMin = clamp(Number($("cardioModMin").value || 0), 0, 2000);
+    const cardioHardMin = clamp(Number($("cardioHardMin").value || 0), 0, 2000);
+    const hasCardio = cardioModMin > 0 || cardioHardMin > 0;
+
+    // Aktuelles Kalorienziel und Makros auslesen
+    const currentTarget = $("targetLine").textContent;
+    const currentProtein = $("pPill").textContent;
+    const currentFat = $("fPill").textContent;
+    const currentCarbs = $("cPill").textContent;
+
+    if (dayType === "train") {
+      savedCalories.train = { 
+        kcal: currentTarget, 
+        protein: currentProtein, 
+        fat: currentFat, 
+        carbs: currentCarbs 
+      };
+      $("savedTrain").style.display = "block";
+      $("savedTrainVal").textContent = currentTarget;
+      $("savedTrainP").textContent = currentProtein;
+      $("savedTrainF").textContent = currentFat;
+      $("savedTrainC").textContent = currentCarbs;
+    } else {
+      if (hasCardio) {
+        savedCalories.restCardio = { 
+          kcal: currentTarget, 
+          protein: currentProtein, 
+          fat: currentFat, 
+          carbs: currentCarbs 
+        };
+        $("savedRestCardio").style.display = "block";
+        $("savedRestCardioVal").textContent = currentTarget;
+        $("savedRestCardioP").textContent = currentProtein;
+        $("savedRestCardioF").textContent = currentFat;
+        $("savedRestCardioC").textContent = currentCarbs;
+      } else {
+        savedCalories.restNoCardio = { 
+          kcal: currentTarget, 
+          protein: currentProtein, 
+          fat: currentFat, 
+          carbs: currentCarbs 
+        };
+        $("savedRestNoCardio").style.display = "block";
+        $("savedRestNoCardioVal").textContent = currentTarget;
+        $("savedRestNoCardioP").textContent = currentProtein;
+        $("savedRestNoCardioF").textContent = currentFat;
+        $("savedRestNoCardioC").textContent = currentCarbs;
+      }
+    }
+
+    $("savedValues").style.display = "block";
+  });
+
+  // Löschen-Funktion
+  $("clearBtn").addEventListener("click", () => {
+    savedCalories = { 
+      train: { kcal: null, protein: null, fat: null, carbs: null },
+      restNoCardio: { kcal: null, protein: null, fat: null, carbs: null },
+      restCardio: { kcal: null, protein: null, fat: null, carbs: null }
+    };
+    $("savedTrain").style.display = "none";
+    $("savedRestNoCardio").style.display = "none";
+    $("savedRestCardio").style.display = "none";
+    $("savedValues").style.display = "none";
+  });
 
   function recalc(){
     const age = clamp(Number($("age").value || 0), 10, 99);
@@ -658,7 +898,8 @@
     const cardioModMin = clamp(Number($("cardioModMin").value || 0), 0, 2000);
     const cardioHardMin = clamp(Number($("cardioHardMin").value || 0), 0, 2000);
 
-    const fatFactor = clamp(Number($("fatInput").value || 0.9), 0, 3);
+    const proteinFactor = clamp(Number($("proteinInput").value || 2.0), 0.8, 3.5);
+    const fatFactor = clamp(Number($("fatInput").value || 0.8), 0, 3);
 
     const hr = hrRanges(age);
     $("hrMod").textContent  = `(${hr.modLo}–${hr.modHi} bpm)`;
@@ -666,7 +907,27 @@
 
     const bmr = mifflinBMR(sex, w, h, age);
     const neat = neatFromSteps(steps, w);
-    const eat = eatFromTraining(w, strengthMin, cardioModMin, cardioHardMin);
+    let eat = 0;
+    
+    if (calculationMode === "simple") {
+      // Normal-Modus: Wochendurchschnitt
+      const hoursStrength = strengthMin / 60;
+      const hoursMod = cardioModMin / 60;
+      const hoursHard = cardioHardMin / 60;
+      const weekKcal = (MET_STRENGTH * w * hoursStrength) + (MET_CARDIO_MOD * w * hoursMod) + (MET_CARDIO_HARD * w * hoursHard);
+      eat = weekKcal / 7;
+    } else {
+      // Komplex-Modus: Tagesbasiert
+      if (dayType === "train") {
+        // Trainingstag: Krafttraining + Cardio
+        eat = eatFromTraining(w, strengthMin, cardioModMin, cardioHardMin);
+      } else {
+        // Ruhetag: nur Cardio (falls eingegeben)
+        const hoursMod = cardioModMin / 60;
+        const hoursHard = cardioHardMin / 60;
+        eat = (MET_CARDIO_MOD * w * hoursMod) + (MET_CARDIO_HARD * w * hoursHard);
+      }
+    }
 
     const tdee = bmr + neat + eat;
     const tef = TEF_RATE * tdee;
@@ -709,7 +970,7 @@
 
     if (goal > w) warn.push("Wunschgewicht liegt über aktuellem Gewicht.");
     if (target < 1200) warn.push("Kalorienziel < 1200 kcal/Tag.");
-    if (deficit > 900) warn.push("Defizit > 900 kcal/Tag.");
+    if (deficit > 1000) warn.push("Defizit > 1000 kcal/Tag.");
 
     const warnBox = $("warnBox");
     if (warn.length){
@@ -720,7 +981,7 @@
       warnBox.textContent = "";
     }
 
-    const proteinG = 2.0 * w;
+    const proteinG = proteinFactor * w;
     const fatG = fatFactor * w;
 
     const proteinCals = proteinG * 4;
@@ -760,6 +1021,15 @@
     $("fFill").style.width = `${fPct}%`;
     $("cFill").style.width = `${cPct}%`;
 
+    // Eiweiß-Balken einfärben: grün wenn >= 2g/kg, gelb wenn 1.5-2g/kg, rot wenn < 1.5g/kg
+    if (proteinFactor >= 2.0) {
+      $("pFill").style.background = "#255b43"; // grün
+    } else if (proteinFactor >= 1.5) {
+      $("pFill").style.background = "rgba(234, 179, 8, 0.85)"; // gelb
+    } else {
+      $("pFill").style.background = "rgba(239, 68, 68, 0.85)"; // rot
+    }
+
     if (diffKg > 0 && deficit > 0){
       const days = (diffKg * 7700) / deficit;
       const wks = days / 7;
@@ -787,6 +1057,3 @@
 </script>
 </body>
 </html>
-
-
-
